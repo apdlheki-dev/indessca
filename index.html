@@ -6,7 +6,7 @@
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Cairo&family=Amiri&family=Tajawal&family=Almarai&family=Readex+Pro&display=swap" rel="stylesheet">
     <style>
-        .page-preview { width: 210mm; min-height: 297mm; background: white; margin: 20px auto; padding: 50px; box-shadow: 0 0 20px rgba(0,0,0,0.1); border: 15px solid #1e293b; transition: 0.3s; position: relative; }
+        .page-preview { width: 210mm; min-height: 297mm; background: white; margin: 20px auto; padding: 50px; box-shadow: 0 0 20px rgba(0,0,0,0.1); border: 20px solid #1e293b; transition: 0.3s; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; }
         .round-img { border-radius: 50%; width: 150px; height: 150px; object-fit: cover; border: 3px solid #ddd; }
         @media print { .no-print { display: none; } .page-preview { margin: 0; box-shadow: none; } }
     </style>
@@ -18,66 +18,65 @@
         <h2 class="text-xl font-bold mb-4 text-center">لوحة إعدادات البحث</h2>
         
         <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <!-- استيراد الصور -->
-            <div>
-                <label class="block text-sm font-bold mb-1">استيراد إطار من المعرض:</label>
-                <input type="file" id="frameInput" accept="image/*" class="w-full p-2 border rounded">
-            </div>
-            <div>
-                <label class="block text-sm font-bold mb-1">استيراد صورة تعريفية (دائرية):</label>
-                <input type="file" id="logoInput" accept="image/*" class="w-full p-2 border rounded">
-            </div>
+            <input type="text" id="inName" placeholder="الاسم" class="p-2 border rounded">
+            <input type="text" id="inUni" placeholder="الجامعة" class="p-2 border rounded">
+            <input type="text" id="inSupervisor" placeholder="المشرف عن البحث" class="p-2 border rounded">
+            <input type="text" id="inTitle" placeholder="عنوان البحث" class="p-2 border rounded">
             
-            <!-- اختيار الخط -->
-            <select id="fontSelect" onchange="changeFont()" class="p-2 border rounded">
-                <option value="Cairo">خط Cairo</option>
-                <option value="Amiri">خط Amiri</option>
-                <option value="Tajawal">خط Tajawal</option>
-                <option value="Almarai">خط Almarai</option>
-                <option value="Readex Pro">خط Readex Pro</option>
+            <select id="frameSelect" onchange="updateFrame()" class="p-2 border rounded">
+                <option value="border: 20px solid #1e293b;">إطار 1 (أزرق غامق)</option>
+                <option value="border: 20px solid #b91c1c;">إطار 2 (أحمر)</option>
+                <!-- تمت إضافة 30 خياراً برمجياً في الكود أدناه -->
             </select>
             
-            <input type="text" id="inTitle" placeholder="عنوان البحث" class="p-2 border rounded">
+            <input type="color" id="colorPicker" onchange="updateColor()" class="w-full h-10 border rounded">
+            <input type="file" id="logoInput" accept="image/*" class="p-2 border rounded">
         </div>
         
-        <button onclick="updateCover()" class="w-full mt-4 bg-blue-700 text-white py-2 rounded-lg font-bold">تحديث التصميم</button>
+        <button onclick="updateCover()" class="w-full mt-4 bg-blue-700 text-white py-2 rounded-lg font-bold">تحديث البيانات</button>
         <button onclick="window.print()" class="w-full mt-2 bg-emerald-700 text-white py-2 rounded-lg font-bold">طباعة</button>
     </div>
 
     <!-- الغلاف -->
-    <div id="coverPreview" class="page-preview flex flex-col items-center justify-center text-center">
+    <div id="coverPreview" class="page-preview">
         <img id="outLogo" src="" class="round-img mb-4 hidden" alt="صورة">
-        <h1 id="outTitle" class="text-4xl font-bold mb-10">عنوان البحث</h1>
+        <h2 id="outUni" class="text-2xl font-bold mb-5">الجامعة</h2>
+        <h1 id="outTitle" class="text-4xl font-bold mb-10 border-b-2 pb-2">عنوان البحث</h1>
+        <p class="text-xl mb-2">إعداد: <span id="outName"></span></p>
+        <p class="text-xl">إشراف: <span id="outSupervisor"></span></p>
     </div>
 
-    <!-- المطور (في أسفل الموقع) -->
-    <footer class="text-center p-6 text-gray-500 no-print">
-        تم إعداده بواسطة عبدالله علي
-    </footer>
+    <footer class="text-center p-6 text-gray-500 no-print">تم إعداده بواسطة عبدالله علي</footer>
 
     <script>
-        // تغيير الخط
-        function changeFont() {
-            document.getElementById('coverPreview').style.fontFamily = document.getElementById('fontSelect').value;
+        // توليد 30 إطاراً
+        const select = document.getElementById('frameSelect');
+        for(let i=1; i<=30; i++) {
+            let opt = document.createElement('option');
+            opt.value = `border: 15px solid hsl(${i*12}, 70%, 50%);`;
+            opt.innerHTML = `إطار رقم ${i}`;
+            select.appendChild(opt);
         }
 
-        // استيراد صورة الإطار
-        document.getElementById('frameInput').onchange = function(e) {
-            const url = URL.createObjectURL(e.target.files[0]);
-            document.getElementById('coverPreview').style.backgroundImage = `url(${url})`;
-            document.getElementById('coverPreview').style.backgroundSize = "cover";
-        };
+        function updateFrame() {
+            document.getElementById('coverPreview').style.cssText += document.getElementById('frameSelect').value;
+        }
 
-        // استيراد الصورة الدائرية
+        function updateColor() {
+            document.getElementById('coverPreview').style.backgroundColor = document.getElementById('colorPicker').value;
+        }
+
         document.getElementById('logoInput').onchange = function(e) {
-            const url = URL.createObjectURL(e.target.files[0]);
             const img = document.getElementById('outLogo');
-            img.src = url;
+            img.src = URL.createObjectURL(e.target.files[0]);
             img.classList.remove('hidden');
         };
 
         function updateCover() {
+            document.getElementById('outUni').innerText = document.getElementById('inUni').value;
             document.getElementById('outTitle').innerText = document.getElementById('inTitle').value;
+            document.getElementById('outName').innerText = document.getElementById('inName').value;
+            document.getElementById('outSupervisor').innerText = document.getElementById('inSupervisor').value;
         }
     </script>
 </body>
