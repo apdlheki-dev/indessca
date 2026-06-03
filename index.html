@@ -2,63 +2,82 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>منصة تصميم الأبحاث</title>
+    <title>منصة تصميم الأبحاث - عبدالله علي</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Cairo&family=Amiri&family=Tajawal&family=Almarai&family=Readex+Pro&display=swap" rel="stylesheet">
     <style>
-        body { font-family: 'Cairo', sans-serif; background: #f1f5f9; }
-        .page-preview { width: 210mm; min-height: 297mm; background: white; margin: 20px auto; padding: 50px; box-shadow: 0 0 20px rgba(0,0,0,0.1); border: 15px solid #1e293b; transition: 0.3s; }
-        .frame-1 { border: 15px solid #1e293b; }
-        .frame-2 { border: 15px double #b91c1c; }
-        .frame-3 { border: 20px solid transparent; border-image: linear-gradient(to right, #b45309, #d97706) 30; }
-        @media print { .no-print { display: none; } .page-preview { margin: 0; box-shadow: none; border-width: 10px; } }
+        .page-preview { width: 210mm; min-height: 297mm; background: white; margin: 20px auto; padding: 50px; box-shadow: 0 0 20px rgba(0,0,0,0.1); border: 15px solid #1e293b; transition: 0.3s; position: relative; }
+        .round-img { border-radius: 50%; width: 150px; height: 150px; object-fit: cover; border: 3px solid #ddd; }
+        @media print { .no-print { display: none; } .page-preview { margin: 0; box-shadow: none; } }
     </style>
 </head>
-<body class="p-4">
+<body class="bg-slate-100 p-4">
 
-    <div class="max-w-xl mx-auto bg-white p-6 rounded-2xl shadow-lg mb-10 no-print border border-gray-200">
-        <h2 class="text-xl font-bold mb-4 text-center">إعداد بيانات البحث</h2>
-        <div class="grid grid-cols-1 gap-3">
-            <select id="inUniversity" class="w-full p-2 border rounded-lg">
-                <option value="جامعة البصرة">جامعة البصرة</option>
-                <option value="جامعة بغداد">جامعة بغداد</option>
-                <option value="جامعة الموصل">جامعة الموصل</option>
+    <!-- لوحة التحكم -->
+    <div class="max-w-4xl mx-auto bg-white p-6 rounded-2xl shadow-lg mb-10 no-print border">
+        <h2 class="text-xl font-bold mb-4 text-center">لوحة إعدادات البحث</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- استيراد الصور -->
+            <div>
+                <label class="block text-sm font-bold mb-1">استيراد إطار من المعرض:</label>
+                <input type="file" id="frameInput" accept="image/*" class="w-full p-2 border rounded">
+            </div>
+            <div>
+                <label class="block text-sm font-bold mb-1">استيراد صورة تعريفية (دائرية):</label>
+                <input type="file" id="logoInput" accept="image/*" class="w-full p-2 border rounded">
+            </div>
+            
+            <!-- اختيار الخط -->
+            <select id="fontSelect" onchange="changeFont()" class="p-2 border rounded">
+                <option value="Cairo">خط Cairo</option>
+                <option value="Amiri">خط Amiri</option>
+                <option value="Tajawal">خط Tajawal</option>
+                <option value="Almarai">خط Almarai</option>
+                <option value="Readex Pro">خط Readex Pro</option>
             </select>
-            <select id="inFrame" onchange="updateFrame()" class="w-full p-2 border rounded-lg">
-                <option value="frame-1">الإطار الغامق</option>
-                <option value="frame-2">الإطار المزدوج</option>
-                <option value="frame-3">الإطار الذهبي</option>
-            </select>
-            <input type="text" id="inTitle" placeholder="عنوان البحث" class="w-full p-2 border rounded-lg">
-            <input type="text" id="inName" placeholder="الاسم" class="w-full p-2 border rounded-lg">
-            <input type="text" id="inSupervisor" placeholder="المشرف عن البحث" class="w-full p-2 border rounded-lg">
-            <input type="date" id="inDate" class="w-full p-2 border rounded-lg">
-            <button onclick="updateCover()" class="w-full bg-blue-700 text-white py-2 rounded-lg font-bold">تحديث التصميم</button>
-            <button onclick="window.print()" class="w-full bg-emerald-700 text-white py-2 rounded-lg font-bold">طباعة</button>
+            
+            <input type="text" id="inTitle" placeholder="عنوان البحث" class="p-2 border rounded">
         </div>
+        
+        <button onclick="updateCover()" class="w-full mt-4 bg-blue-700 text-white py-2 rounded-lg font-bold">تحديث التصميم</button>
+        <button onclick="window.print()" class="w-full mt-2 bg-emerald-700 text-white py-2 rounded-lg font-bold">طباعة</button>
     </div>
 
-    <div id="coverPreview" class="page-preview frame-1 flex flex-col items-center justify-center text-center">
-        <h2 id="outUni" class="text-2xl font-bold mb-10">جامعة البصرة</h2>
-        <h1 id="outTitle" class="text-4xl font-bold mb-10 border-b-2 border-gray-300 pb-4">عنوان البحث</h1>
-        <div class="space-y-6 text-xl">
-            <p>إعداد الطالب: <span id="outName"></span></p>
-            <p>بإشراف: <span id="outSupervisor"></span></p>
-            <p class="mt-10 text-gray-500" id="outDate"></p>
-        </div>
+    <!-- الغلاف -->
+    <div id="coverPreview" class="page-preview flex flex-col items-center justify-center text-center">
+        <img id="outLogo" src="" class="round-img mb-4 hidden" alt="صورة">
+        <h1 id="outTitle" class="text-4xl font-bold mb-10">عنوان البحث</h1>
     </div>
+
+    <!-- المطور (في أسفل الموقع) -->
+    <footer class="text-center p-6 text-gray-500 no-print">
+        تم إعداده بواسطة عبدالله علي
+    </footer>
 
     <script>
-        function updateFrame() {
-            const frame = document.getElementById('inFrame').value;
-            document.getElementById('coverPreview').className = `page-preview flex flex-col items-center justify-center text-center ${frame}`;
+        // تغيير الخط
+        function changeFont() {
+            document.getElementById('coverPreview').style.fontFamily = document.getElementById('fontSelect').value;
         }
+
+        // استيراد صورة الإطار
+        document.getElementById('frameInput').onchange = function(e) {
+            const url = URL.createObjectURL(e.target.files[0]);
+            document.getElementById('coverPreview').style.backgroundImage = `url(${url})`;
+            document.getElementById('coverPreview').style.backgroundSize = "cover";
+        };
+
+        // استيراد الصورة الدائرية
+        document.getElementById('logoInput').onchange = function(e) {
+            const url = URL.createObjectURL(e.target.files[0]);
+            const img = document.getElementById('outLogo');
+            img.src = url;
+            img.classList.remove('hidden');
+        };
+
         function updateCover() {
-            document.getElementById('outUni').innerText = document.getElementById('inUniversity').value;
             document.getElementById('outTitle').innerText = document.getElementById('inTitle').value;
-            document.getElementById('outName').innerText = document.getElementById('inName').value;
-            document.getElementById('outSupervisor').innerText = document.getElementById('inSupervisor').value;
-            document.getElementById('outDate').innerText = document.getElementById('inDate').value;
         }
     </script>
 </body>
