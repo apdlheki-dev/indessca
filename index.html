@@ -2,48 +2,58 @@
 <html lang="ar" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <title>منصة عبدالله علي للتصميم</title>
-    <link rel="stylesheet" href="https://unpkg.com/grapesjs/dist/css/grapes.min.css">
-    <script src="https://unpkg.com/grapesjs"></script>
+    <title>منصة عبدالله علي الأكاديمية</title>
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        body, html { height: 100%; margin: 0; overflow: hidden; }
-        #gjs { height: 100%; }
-        .export-btn { 
-            position: fixed; top: 10px; right: 10px; z-index: 9999; 
-            background: #2563eb; color: white; padding: 10px 20px; 
-            border-radius: 8px; cursor: pointer; font-weight: bold; 
-        }
+        @media print { .no-print { display: none; } #coverPreview { border: none; box-shadow: none; } }
+        .template-1 { border: 8px solid #1e3a8a; }
+        .template-2 { border: 8px double #064e3b; }
+        .template-3 { border: 8px solid #7c2d12; }
     </style>
 </head>
-<body>
+<body class="bg-slate-900 text-white p-6">
 
-    <!-- زر تصدير الكود -->
-    <div class="export-btn" onclick="exportCode()">تصدير الكود</div>
+    <div class="max-w-2xl mx-auto">
+        <!-- قسم المطور -->
+        <div class="text-center mb-8">
+            <h1 class="text-2xl font-bold">منصة تصميم الأغلفة الأكاديمية</h1>
+            <p class="text-slate-400">تطوير: <a href="https://www.instagram.com/ap__ud" class="text-blue-400">عبدالله علي (@ap__ud)</a></p>
+        </div>
 
-    <div id="gjs"></div>
+        <!-- لوحة التحكم -->
+        <div class="bg-slate-800 p-6 rounded-2xl shadow-xl no-print space-y-4">
+            <select id="templateSelect" class="w-full p-3 bg-slate-700 rounded-lg">
+                <option value="template-1">تصميم جامعة بغداد (أزرق)</option>
+                <option value="template-2">تصميم كلاسيكي (أخضر)</option>
+                <option value="template-3">تصميم حديث (بني)</option>
+            </select>
+            <input type="text" id="title" placeholder="عنوان البحث" class="w-full p-3 bg-slate-700 rounded-lg">
+            <textarea id="students" placeholder="أسماء الطلاب (سطر لكل اسم)" class="w-full p-3 bg-slate-700 rounded-lg"></textarea>
+            <div class="flex gap-2">
+                <button onclick="updateCover()" class="flex-1 bg-blue-600 p-3 rounded-lg font-bold">تحديث المعاينة</button>
+                <button onclick="window.print()" class="flex-1 bg-emerald-600 p-3 rounded-lg font-bold">طباعة الغلاف</button>
+            </div>
+        </div>
+
+        <!-- المعاينة -->
+        <div id="coverPreview" class="template-1 mt-8 p-12 bg-white text-black min-h-[800px] flex flex-col justify-between shadow-2xl rounded-sm">
+            <h1 id="outTitle" class="text-4xl font-bold text-center mt-20">عنوان البحث يظهر هنا</h1>
+            <div id="outStudents" class="text-xl text-center space-y-2"></div>
+            <div class="text-center font-bold pb-10">إعداد الطالب: عبدالله علي</div>
+        </div>
+    </div>
 
     <script>
-        const editor = grapesjs.init({
-            container: '#gjs',
-            height: '100%',
-            storageManager: false,
-            blockManager: {
-                blocks: [
-                    { id: 'search', label: 'صندوق بحث', content: '<input type="text" placeholder="ابحث..." style="padding:15px; width:300px; border:2px solid #ddd; border-radius:30px; outline:none;">' },
-                    { id: 'btn', label: 'زر بحث', content: '<button style="padding:15px 30px; background:#2563eb; color:white; border-radius:30px; border:none; cursor:pointer;">بحث</button>' },
-                    { id: 'title', label: 'عنوان', content: '<h1>عنوان البحث</h1>' }
-                ]
-            }
-        });
-
-        function exportCode() {
-            const html = editor.getHtml();
-            const css = editor.getCss();
-            const fullCode = `<html><style>${css}</style><body>${html}</body></html>`;
+        function updateCover() {
+            const template = document.getElementById('templateSelect').value;
+            const preview = document.getElementById('coverPreview');
             
-            // فتح الكود في نافذة جديدة
-            const win = window.open("", "_blank");
-            win.document.write(`<pre>${fullCode.replace(/</g, "&lt;")}</pre>`);
+            // تغيير التصميم
+            preview.className = `mt-8 p-12 bg-white text-black min-h-[800px] flex flex-col justify-between shadow-2xl rounded-sm ${template}`;
+            
+            // تحديث البيانات
+            document.getElementById('outTitle').innerText = document.getElementById('title').value || "عنوان البحث";
+            document.getElementById('outStudents').innerHTML = document.getElementById('students').value.replace(/\n/g, '<br>');
         }
     </script>
 </body>
