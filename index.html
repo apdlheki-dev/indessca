@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>منصة عبدالله علي للتصميم</title>
+    <link rel="stylesheet" href="https://unpkg.com/grapesjs/dist/css/grapes.min.css">
+    <script src="https://unpkg.com/grapesjs"></script>
+    <style>
+        body, html { height: 100%; margin: 0; overflow: hidden; }
+        #gjs { height: 100%; }
+        .export-btn { 
+            position: fixed; top: 10px; right: 10px; z-index: 9999; 
+            background: #2563eb; color: white; padding: 10px 20px; 
+            border-radius: 8px; cursor: pointer; font-weight: bold; 
+        }
+    </style>
+</head>
+<body>
+
+    <!-- زر تصدير الكود -->
+    <div class="export-btn" onclick="exportCode()">تصدير الكود</div>
+
+    <div id="gjs"></div>
+
+    <script>
+        const editor = grapesjs.init({
+            container: '#gjs',
+            height: '100%',
+            storageManager: false,
+            blockManager: {
+                blocks: [
+                    { id: 'search', label: 'صندوق بحث', content: '<input type="text" placeholder="ابحث..." style="padding:15px; width:300px; border:2px solid #ddd; border-radius:30px; outline:none;">' },
+                    { id: 'btn', label: 'زر بحث', content: '<button style="padding:15px 30px; background:#2563eb; color:white; border-radius:30px; border:none; cursor:pointer;">بحث</button>' },
+                    { id: 'title', label: 'عنوان', content: '<h1>عنوان البحث</h1>' }
+                ]
+            }
+        });
+
+        function exportCode() {
+            const html = editor.getHtml();
+            const css = editor.getCss();
+            const fullCode = `<html><style>${css}</style><body>${html}</body></html>`;
+            
+            // فتح الكود في نافذة جديدة
+            const win = window.open("", "_blank");
+            win.document.write(`<pre>${fullCode.replace(/</g, "&lt;")}</pre>`);
+        }
+    </script>
+</body>
+</html>
